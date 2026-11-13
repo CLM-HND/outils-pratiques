@@ -3,26 +3,93 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Outils pratiques — petits outils en ligne gratuits</title>
-<meta name="description" content="Des petits outils en ligne gratuits, simples et sans inscription : images, texte, couleurs, calculs du quotidien.">
+<title>Outils pratiques — petits outils en ligne gratuits, sans inscription</title>
+<meta name="description" content="Des outils en ligne gratuits pour le quotidien : images, texte, couleurs, calculs. Sans inscription, et rien n'est envoyé sur un serveur.">
+<link rel="canonical" href="https://outils-pratiques.vercel.app/">
+<meta property="og:title" content="Outils pratiques — gratuits et sans inscription">
+<meta property="og:description" content="Des petits outils du quotidien qui marchent directement dans ton navigateur.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Inter:wght@400;500;600&display=swap">
 <link rel="stylesheet" href="/assets/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%2316161b'/%3E%3Cpath d='M19.3 7.3a5.3 5.3 0 0 0-7 7L5.3 21.3l5.4 5.4 7-7a5.3 5.3 0 0 0 7-7l-3.2 3.2-3.5-.8-.8-3.5z' fill='none' stroke='%23fff' stroke-width='2.4' stroke-linejoin='round'/%3E%3C/svg%3E">
 </head>
 <body>
-<div class="wrap">
-  <header class="site"><a class="logo" href="/">Outils pratiques</a></header>
-  <h1>Des petits outils gratuits, sans inscription</h1>
-  <p class="lead">Tout se passe dans ton navigateur : tes fichiers ne sont envoyés nulle part. Un nouvel outil chaque semaine.</p>
-  <div class="grid" id="tools"></div>
-  <noscript><p><a href="/outils/redimensionner-image-reseaux/">Redimensionner une image pour les réseaux</a></p></noscript>
-  <footer>Outils pratiques — gratuit, sans compte, sans pistage.</footer>
-</div>
+<header class="site-head"><div class="wrap">
+  <a class="logo" href="/"><span class="mark" data-icon="logo"></span>Outils pratiques</a>
+  <nav><a href="/#outils" aria-current="page">Les outils</a><a href="/#pourquoi" class="hide-sm">Pourquoi nous</a></nav>
+</div></header>
+
+<main>
+  <section class="wrap hero">
+    <div>
+      <h1>Les petits outils du quotidien, <em>gratuits</em> et sans inscription.</h1>
+      <p>Redimensionner une photo, compter des caractères, trouver une couleur… Tout se fait directement dans ton navigateur. Un nouvel outil arrive chaque semaine.</p>
+      <label class="search" for="q"><span data-icon="search"></span><input id="q" type="search" placeholder="Que veux-tu faire ? (ex. image, couleur…)" autocomplete="off"></label>
+      <div class="trust">
+        <span><span data-icon="check"></span>100 % gratuit</span>
+        <span><span data-icon="check"></span>Sans compte</span>
+        <span><span data-icon="check"></span>Tes fichiers restent chez toi</span>
+      </div>
+    </div>
+    <div class="hero-art" aria-hidden="true">
+      <div class="tile t1" data-icon="image"></div>
+      <div class="tile t2" data-icon="couleurs"></div>
+      <div class="tile t3" data-icon="calculs"></div>
+      <div class="tile t4" data-icon="texte"></div>
+    </div>
+  </section>
+
+  <section class="wrap section" id="outils">
+    <div class="section-head">
+      <h2>Tous les outils</h2>
+      <div class="filters" id="filters"></div>
+    </div>
+    <div class="tools" id="tools">
+      <noscript><a class="tool-card" href="/outils/redimensionner-image-reseaux/"><h3>Redimensionner une image pour les réseaux</h3></a></noscript>
+    </div>
+  </section>
+
+  <section class="wrap section" id="pourquoi">
+    <div class="section-head"><h2>Pourquoi utiliser ces outils ?</h2></div>
+    <div class="why">
+      <div><span data-icon="shield"></span><h3>Rien ne quitte ton appareil</h3><p>Les calculs et les images sont traités dans ton navigateur. Aucun fichier n'est envoyé sur un serveur.</p></div>
+      <div><span data-icon="bolt"></span><h3>Direct, sans détour</h3><p>Pas de compte, pas de pop-up d'inscription, pas d'attente : tu ouvres, tu utilises, c'est fini.</p></div>
+      <div><span data-icon="gift"></span><h3>Un nouvel outil chaque semaine</h3><p>La boîte à outils s'agrandit chaque jeudi avec un nouvel outil utile au quotidien.</p></div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-foot"><div class="wrap">
+  <span>© 2026 Outils pratiques — gratuit, sans compte, sans pistage.</span>
+  <span>Fait en France.</span>
+</div></footer>
+
+<script src="/assets/icons.js"></script>
 <script>
-fetch('/tools.json').then(r=>r.json()).then(list=>{
-  list.sort((a,b)=>b.date.localeCompare(a.date));
-  const el=document.getElementById('tools');
-  el.innerHTML=list.map(t=>`<a class="tool" href="/outils/${t.slug}/"><strong></strong><span></span></a>`).join('');
-  [...el.children].forEach((a,i)=>{a.querySelector('strong').textContent=list[i].titre;a.querySelector('span').textContent=list[i].description});
-});
+const CAT={images:"Images",texte:"Texte",couleurs:"Couleurs",calculs:"Calculs",productivite:"Productivité"};
+const state={cat:"",q:"",list:[]};
+const norm=s=>s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"");
+function render(){
+  const recent=Date.now()-14*864e5;
+  const items=state.list.filter(t=>(!state.cat||t.categorie===state.cat)&&(!state.q||norm(t.titre+" "+t.description+" "+(CAT[t.categorie]||"")).includes(state.q)));
+  const el=document.getElementById("tools");
+  el.innerHTML=items.map(t=>`<a class="tool-card" href="/outils/${t.slug}/">
+      ${new Date(t.date).getTime()>recent?'<span class="badge">Nouveau</span>':''}
+      <span class="ic" style="background:var(--c-${t.categorie})">${icon(t.icone||t.categorie)}</span>
+      <h3></h3><p></p>
+      <span class="go">Utiliser l'outil ${icon("arrow")}</span></a>`).join("")+
+    (state.q||state.cat?"":`<div class="tool-card soon"><span class="ic">${icon("gift")}</span><h3>Prochain outil jeudi</h3><p>Un nouvel outil s'ajoute ici chaque semaine.</p></div>`);
+  [...el.querySelectorAll("a.tool-card")].forEach((a,i)=>{a.querySelector("h3").textContent=items[i].titre;a.querySelector("p").textContent=items[i].description});
+  if(!items.length)el.innerHTML='<p style="color:var(--muted)">Aucun outil ne correspond pour l\'instant.</p>';
+}
+function filters(){
+  const used=[...new Set(state.list.map(t=>t.categorie))];
+  const f=document.getElementById("filters");
+  f.innerHTML=`<button class="chip" data-c="" aria-pressed="${!state.cat}">Tous</button>`+used.map(c=>`<button class="chip" data-c="${c}" aria-pressed="${state.cat===c}">${CAT[c]||c}</button>`).join("");
+}
+document.getElementById("filters").addEventListener("click",e=>{const b=e.target.closest("[data-c]");if(!b)return;state.cat=b.dataset.c;filters();render()});
+document.getElementById("q").addEventListener("input",e=>{state.q=norm(e.target.value.trim());render()});
+fetch("/tools.json").then(r=>r.json()).then(l=>{state.list=l.sort((a,b)=>b.date.localeCompare(a.date));filters();render()});
 </script>
 </body>
 </html>

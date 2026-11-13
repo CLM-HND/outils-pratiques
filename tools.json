@@ -2,7 +2,9 @@
   {
     "slug": "redimensionner-image-reseaux",
     "titre": "Redimensionner une image pour les réseaux",
-    "description": "Adapte une photo aux formats Instagram, TikTok, YouTube, LinkedIn ou X, sans la déformer.",
+    "description": "Adapte une photo aux formats Instagram, TikTok, YouTube, LinkedIn ou X en un clic, sans la déformer.",
+    "categorie": "images",
+    "icone": "resize",
     "date": "2026-11-13"
   }
 ]
