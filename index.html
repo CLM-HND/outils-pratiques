@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Outils pratiques — petits outils en ligne gratuits</title>
+<meta name="description" content="Des petits outils en ligne gratuits, simples et sans inscription : images, texte, couleurs, calculs du quotidien.">
+<link rel="stylesheet" href="/assets/style.css">
+</head>
+<body>
+<div class="wrap">
+  <header class="site"><a class="logo" href="/">Outils pratiques</a></header>
+  <h1>Des petits outils gratuits, sans inscription</h1>
+  <p class="lead">Tout se passe dans ton navigateur : tes fichiers ne sont envoyés nulle part. Un nouvel outil chaque semaine.</p>
+  <div class="grid" id="tools"></div>
+  <noscript><p><a href="/outils/redimensionner-image-reseaux/">Redimensionner une image pour les réseaux</a></p></noscript>
+  <footer>Outils pratiques — gratuit, sans compte, sans pistage.</footer>
+</div>
+<script>
+fetch('/tools.json').then(r=>r.json()).then(list=>{
+  list.sort((a,b)=>b.date.localeCompare(a.date));
+  const el=document.getElementById('tools');
+  el.innerHTML=list.map(t=>`<a class="tool" href="/outils/${t.slug}/"><strong></strong><span></span></a>`).join('');
+  [...el.children].forEach((a,i)=>{a.querySelector('strong').textContent=list[i].titre;a.querySelector('span').textContent=list[i].description});
+});
+</script>
+</body>
+</html>
